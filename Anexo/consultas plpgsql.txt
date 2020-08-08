@@ -1,0 +1,81 @@
+
+
+/////***/*//**/*/*/*/*/ QUERY RUTINA 
+
+CREATE OR REPLACE FUNCTION getMateriaSerida() RETURNS SETOF materia AS
+$BODY$
+DECLARE
+    r materia%rowtype;
+BEGIN
+    FOR r IN SELECT * FROM materia
+    WHERE materiaseriada IS NOT NULL
+    LOOP
+        RETURN NEXT r;
+    END LOOP;
+    RETURN;
+END
+$BODY$
+LANGUAGE 'plpgsql' ;
+
+SELECT * FROM getMateriaSerida();
+
+*/*/*/*//*/* Rutina para consultar las materias por semestre.
+
+CREATE OR REPLACE FUNCTION getMateriaSemestre(sem integer) RETURNS SETOF materia AS
+$BODY$
+DECLARE
+    r materia%rowtype;
+BEGIN
+    FOR r IN SELECT * FROM materia m
+    WHERE m.semestre_id = sem
+    LOOP
+        RETURN NEXT r;
+    END LOOP;
+    RETURN;
+END
+$BODY$
+LANGUAGE 'plpgsql' ;
+
+SELECT * FROM getMateriaSemestre(2);
+
+*//**/*/*/*//* Rutina para consultar las materias de la división específica.
+
+CREATE OR REPLACE FUNCTION getmateriatc(tc integer) RETURNS SETOF materia AS
+$BODY$
+DECLARE
+    r materia%rowtype;
+BEGIN
+    FOR r IN SELECT * FROM materia m
+    WHERE m.tronco_comun_id = tc
+    LOOP
+        RETURN NEXT r;
+    END LOOP;
+    RETURN;
+END
+$BODY$
+LANGUAGE 'plpgsql' ;
+
+SELECT * FROM getmateriatc(1);
+
+/*************** Laboratorio *******************/
+CREATE OR REPLACE FUNCTION getlaboratorio(lab text) RETURNS SETOF materia AS
+$BODY$
+DECLARE
+    r materia%rowtype;
+BEGIN
+    FOR r IN SELECT m.*,l.* FROM materia m
+	INNER JOIN laboratorio l ON l.id = m.laboratorio_id
+	WHERE l.abr = lab
+    LOOP
+        RETURN NEXT r;
+    END LOOP;
+    RETURN;
+END
+$BODY$
+LANGUAGE 'plpgsql' ;
+
+SELECT * FROM getlaboratorio('L+');
+
+/************** CONSULTA PARA VER SERIACIONES nombre de materias seriadas ********************/
+
+
